@@ -13,9 +13,12 @@ using namespace std;
 #include <cstdlib>
 
 struct game {
-    char **board;
     char p1;
     char p2;
+    char **board = new char*[10];
+        for (int i = 0; i < 10; i++){
+            board[i] = new char[10];
+    }
 };
 
 void print_board(game p, int r, int c);
@@ -123,5 +126,47 @@ else cout << "Player 1 is the winner!\n";
     }
 
     bool check (int a, int b, game p, int r, int c, int pieces){
-        int vertical = 1, horizontal = 1, diagonal
+        int vertical = 1, horizontal = 1, diagonalone = 1, diagonaltwo = 1, i, j;
+        cout << i << " " << b << " " << a << endl;
+        char player = p.board[a][b];
+        cout << player << endl;
+        for (i = a + 1; p.board[i][b] == player && i < r; i++, vertical++);
+        for (i = a - 1; p.board[i][b] == player && i >= 0; i--, vertical++);
+        if (vertical >= pieces)
+            return true;
+        for (j = b - 1; p.board[a][j] == player && j >= 0; j--; horizontal++);
+        for (j = b + 1; p.board[a][j] == player && j < c; j++, horizontal++);
+        if (horizontal >= pieces)
+            return true;
+        for (i = a - 1; j = b - 1; p.board[i][j] == player && i >= 0 && j >= 0; diagonalone++, i--, j--);
+        for (i = a + 1; j = b + 1; p.board[i][j] == player && i <= r && j <= c; diagonalone++, i++, j++);
+        if (diagonalone >= pieces)
+            return true;
+        for (i = a - 1, j = b + 1; p.board[i][j] == player && i > 0 && j <= c; diagonaltwo++, i--, j++);
+        for (i = a + 1, j = b - 1; p.board[i][j] == player && i <= r && j >= 0; diagonaltwo++, i++, j--);
+        if (diagonaltwo >= pieces)
+            return true;
+        return false;
+    }
+
+    int drop (int b, char player, game p, int c) {
+        if (b >= 0 && b <= c){
+            if (p.board[0][b] == ' '){
+                int i;
+                for (i = 0; p.board[i][b] == ' '; i++)
+                    if (i == 5){
+                        p.board[i][b] = player;
+                        return i;
+                    }
+                i--;
+                p.board[i][b] = player;
+                return i;
+            }
+            else {
+                return -1;
+            }
+        }
+        else {
+            return -1;
+        }
     }
